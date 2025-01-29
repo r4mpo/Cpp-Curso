@@ -1,5 +1,7 @@
 #include <iostream>
 #include <regex>
+#include <cstdlib> // importando bibliotecas de C
+#include <ctime> // importando biblioteca de C relacionada a tempo
 
 using namespace std;
 
@@ -23,73 +25,110 @@ int main()
     cout << "** SEJA BEM-VINDO AO JOGO DE ADVINHACAO FEITO COM C++ **" << endl;
     cout << "**********************************************************" << endl;
 
+    char nivel_dificuldade;
+    int tentativas_disponiveis;
+
+    cout << "Escolha um nivel de dificuldade:" << endl;
+    cout << "Facil (F), Medio (M) ou Dificil (D)" << endl;
+
+    cin >> nivel_dificuldade;
+
+    if (nivel_dificuldade == 'F')
+    {
+        tentativas_disponiveis = 15;
+    }
+
+    else if (nivel_dificuldade == 'M')
+    {
+        tentativas_disponiveis = 10;
+    }
+
+    else
+    {
+        tentativas_disponiveis = 5;
+    }
+
     bool pendente = true;
     string valor_digitado;
     double pontuacao = 1000.0;
-    int numero_tentativas = 0;
-    const int VALOR_SECRETO = 7;
+
+    srand(time(NULL));
+    const int VALOR_SECRETO = rand() % 100;
 
     while (pendente)
     {
-        numero_tentativas++;
-
-        cout << endl
-             << "Digite um numero: ";
-
-        cin >> valor_digitado;
-
-        // stoi = converte std::string para um int.
-        pontuacao = calcula_pontuacao(stoi(valor_digitado), VALOR_SECRETO, pontuacao);
-
-        bool valor_numerico = verifica_valor_numerico(valor_digitado);
-
-        if (!valor_numerico)
+        for (int numero_tentativas = 1; numero_tentativas <= tentativas_disponiveis; numero_tentativas++)
         {
-            cout << "Ops! Parece que voce nao digitou um valor numerico valido...";
-        }
+            cout << endl
+                 << "Digite um numero: ";
 
-        else
-        {
+            cin >> valor_digitado;
 
-            bool usuario_acertou = stoi(valor_digitado) == VALOR_SECRETO;
+            // stoi = converte std::string para um int.
+            pontuacao = calcula_pontuacao(stoi(valor_digitado), VALOR_SECRETO, pontuacao);
 
-            if (usuario_acertou)
+            bool valor_numerico = verifica_valor_numerico(valor_digitado);
+
+            if (!valor_numerico)
             {
-                cout << "Boa! Voce acertou o numero secreto!" << endl;
-                cout << "Numero Digitado: " << valor_digitado << "." << endl
-                     << "Numero Secreto: " << VALOR_SECRETO << "." << endl;
-
-                pendente = false;
+                cout << "Ops! Parece que voce nao digitou um valor numerico valido...";
             }
 
             else
             {
-                cout << "Ops! Parece que voce nao acertou o valor." << endl;
 
-                bool valor_digitado_maior = stoi(valor_digitado) > VALOR_SECRETO;
+                bool usuario_acertou = stoi(valor_digitado) == VALOR_SECRETO;
 
-                if (valor_digitado_maior)
+                if (usuario_acertou)
                 {
-                    cout << "Seu palpite foi maior que o numero secreto." << endl;
+                    cout << "Boa! Voce acertou o numero secreto!" << endl;
+                    cout << "Numero Digitado: " << valor_digitado << "." << endl
+                         << "Numero Secreto: " << VALOR_SECRETO << "." << endl;
+
+                    pendente = false;
                 }
 
                 else
                 {
-                    cout << "Seu palpite foi menor que o numero secreto." << endl;
+                    cout << "Ops! Parece que voce nao acertou o valor." << endl;
+
+                    bool valor_digitado_maior = stoi(valor_digitado) > VALOR_SECRETO;
+
+                    if (valor_digitado_maior)
+                    {
+                        cout << "Seu palpite foi maior que o numero secreto." << endl;
+                    }
+
+                    else
+                    {
+                        cout << "Seu palpite foi menor que o numero secreto." << endl;
+                    }
                 }
             }
+
+            cout
+                << "**********************************************************" << endl;
+
+            if (!pendente)
+            {
+                cout << "Qtd. de tentativas: " << numero_tentativas << "." << endl;
+                cout.precision(2); // colocando vírgula no resultado.
+                cout << fixed;     // colocando vírgula no resultado.
+                cout << "Pontuacao: " << pontuacao << " pontos." << endl;
+                break;
+            }
+
+            else if (numero_tentativas == tentativas_disponiveis)
+            {
+                cout << "Fim de Jogo!" << endl
+                     << "Voce perdeu!" << endl
+                     << "Tente novamente!" << endl;
+            }
+
+            cout
+                << "**********************************************************";
         }
 
-        cout << "Qtd. de tentativas: " << numero_tentativas << "." << endl;
-
-        // colocando vírgula no resultado.
-        cout.precision(2);
-        cout << fixed;
-        // ------------------------------
-
-        cout << "Pontuacao: " << pontuacao << " pontos." << endl;
-
-        cout
-            << "**********************************************************";
+        return 0;
     }
 }
