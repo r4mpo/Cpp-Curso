@@ -2,9 +2,12 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <fstream>
+#include <ctime>
+#include <cstdlib>
 using namespace std;
 
-const string PALAVRA_SECRETA = "Programacao";
+string palavra_secreta = "Programacao";
 map<char, bool> chutou_letra;
 vector<char> chutes_errados;
 
@@ -14,16 +17,16 @@ bool contem_letra(char letra)
 
     /* Esta é a versão de como tradicionalmente verificaríamos
     a existência de uma letra dentro de uma string:
-    for (int i = 0; i < PALAVRA_SECRETA.size(); i++)
+    for (int i = 0; i < palavra_secreta.size(); i++)
     {
-        if (letra == PALAVRA_SECRETA[i])
+        if (letra == palavra_secreta[i])
         {
             contem_letra = true;
         }
     } */
 
     // Esta é a versão aprimorada, trazida pelo c++ em sua versão 11:
-    for (char letra_atual : PALAVRA_SECRETA)
+    for (char letra_atual : palavra_secreta)
     {
         if (letra == letra_atual)
         {
@@ -36,7 +39,7 @@ bool contem_letra(char letra)
 
 bool nao_acertou()
 {
-    for (char letra : PALAVRA_SECRETA)
+    for (char letra : palavra_secreta)
     {
         if (!chutou_letra[letra])
         {
@@ -74,7 +77,7 @@ void imprime_palavra_secreta()
     cout << endl
          << "Palavra secreta: ";
 
-    for (char letra : PALAVRA_SECRETA)
+    for (char letra : palavra_secreta)
     {
         char letra_individual;
 
@@ -91,8 +94,38 @@ void imprime_palavra_secreta()
     }
 }
 
+vector<string> visualiza_arquivo()
+{
+    // input, file, stream
+    ifstream arquivo;
+    arquivo.open("palavras.txt");
+
+    int qtd_palavras;
+    vector<string> palavras_arquivo;
+
+    arquivo >> qtd_palavras;
+
+    for (int i = 0; i < qtd_palavras; i++)
+    {
+        string palavra_lida;
+        arquivo >> palavra_lida;
+        palavras_arquivo.push_back(palavra_lida);
+    }
+
+    
+    return palavras_arquivo;
+}
+
+void sorteia_palavra(){
+    vector<string> palavras = visualiza_arquivo();
+    srand(time(NULL));
+    int indice_sorteado = rand() % palavras.size();
+    palavra_secreta = palavras[indice_sorteado];
+}
+
 int main()
 {
+    sorteia_palavra();
     imprime_cabecalho();
 
     cout << endl;
@@ -106,12 +139,10 @@ int main()
 
         cout << endl
              << endl;
-        ;
 
         char chute;
 
         cout << "Digite seu chute: ";
-
         cin >> chute;
 
         chutou_letra[chute] = true;
