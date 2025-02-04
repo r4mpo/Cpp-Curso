@@ -1,1 +1,0 @@
-Compilar com Makefile no Windows -> mingw32-make << nome do arquivo >>
