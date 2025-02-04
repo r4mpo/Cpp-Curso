@@ -100,27 +100,75 @@ vector<string> visualiza_arquivo()
     ifstream arquivo;
     arquivo.open("palavras.txt");
 
-    int qtd_palavras;
-    vector<string> palavras_arquivo;
-
-    arquivo >> qtd_palavras;
-
-    for (int i = 0; i < qtd_palavras; i++)
+    if (arquivo.is_open())
     {
-        string palavra_lida;
-        arquivo >> palavra_lida;
-        palavras_arquivo.push_back(palavra_lida);
+        int qtd_palavras;
+        vector<string> palavras_arquivo;
+
+        arquivo >> qtd_palavras;
+
+        for (int i = 0; i < qtd_palavras; i++)
+        {
+            string palavra_lida;
+            arquivo >> palavra_lida;
+            palavras_arquivo.push_back(palavra_lida);
+        }
+
+        arquivo.close();
+        return palavras_arquivo;
     }
 
-    
-    return palavras_arquivo;
+    else
+    {
+        cout << "Impossivel acessar o arquivo de palavras...";
+        exit(0);
+    }
 }
 
-void sorteia_palavra(){
+void sorteia_palavra()
+{
     vector<string> palavras = visualiza_arquivo();
     srand(time(NULL));
     int indice_sorteado = rand() % palavras.size();
     palavra_secreta = palavras[indice_sorteado];
+}
+
+void salva_arquivo(vector<string> nova_lista)
+{
+    // output, file, stream
+    ofstream arquivo;
+    arquivo.open("palavras.txt");
+
+    if (arquivo.is_open())
+    {
+        // escrevendo em um arquivo
+        arquivo << nova_lista.size() << endl;
+
+        for (string palavra : nova_lista)
+        {
+            arquivo << palavra << endl;
+        }
+
+        arquivo.close();
+    }
+
+    else
+    {
+        cout << "Impossivel acessar o arquivo de palavras...";
+        exit(0);
+    }
+}
+
+void adiciona_palavra()
+{
+    cout << "Digita a nova palavra: ";
+    string nova_palavra;
+    cin >> nova_palavra;
+
+    vector<string> lista_palavras = visualiza_arquivo();
+    lista_palavras.push_back(nova_palavra);
+
+    salva_arquivo(lista_palavras);
 }
 
 int main()
@@ -159,5 +207,23 @@ int main()
         }
 
         cout << endl;
+    }
+
+    if (nao_acertou())
+    {
+        cout << "Fim de Jogo! Aparentemente o jogador perdeu!";
+    }
+
+    else if (nao_enforcou())
+    {
+        cout << "Fim de Jogo! Aparentemente o jogador venceu!" << endl;
+        cout << "Deseja adicionar uma nova palavra ao banco?" << endl;
+        char resposta;
+        cin >> resposta;
+
+        if (resposta == 'S')
+        {
+            adiciona_palavra();
+        }
     }
 }
